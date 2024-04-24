@@ -1,4 +1,4 @@
-package com.example.listacompracompose.ui.screens
+package com.example.listacompracompose.ui.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,9 +30,9 @@ fun ShoppingListItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .background(color = if (checked) Color.Green else Color.Cyan),
+            .background(color = if (checked) Color.LightGray else Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
+        horizontalArrangement = Arrangement.SpaceBetween,
         )
     {
         Text(text = name)
