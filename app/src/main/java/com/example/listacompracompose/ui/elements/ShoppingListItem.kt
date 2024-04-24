@@ -29,7 +29,7 @@ fun ShoppingListItem(
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(6.dp)
             .background(color = if (checked) Color.LightGray else Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
