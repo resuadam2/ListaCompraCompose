@@ -41,7 +41,7 @@ fun AddProduct(
         val context = LocalContext.current
         TextField(value = value, onValueChange = { value = it })
         IconButton(onClick = {
-            if (value.isEmpty()) {
+            if (value.isBlank()) {
                 Toast.makeText(context, "Product name cannot be empty", Toast.LENGTH_SHORT).show()
             } else if(!addProduct(value))
                 Toast.makeText(context, "Product already exists", Toast.LENGTH_SHORT).show()
