@@ -1,9 +1,7 @@
 package com.example.listacompracompose.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import com.example.listacompracompose.data.productsExample
 
 data class Product (val name: String, var checked: Boolean = false) {}
 
-fun getFakeShoppingProducts() = List(20) { Product("Product $it") }
+fun getFakeShoppingProducts() = productsExample.map { Product(it) }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -18,8 +20,8 @@ import com.example.listacompracompose.ui.state.ShoppingListViewModel
 
 
 @Composable
-fun MainScreen() {
-    val vm: ShoppingListViewModel = viewModel()
+fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
+    val shoppingListUiState by shoppingListViewModel.uiState.collectAsState()
 
     Column (
         modifier = Modifier
@@ -29,18 +31,18 @@ fun MainScreen() {
     ){
         Text( text = "Shopping List", fontSize = 24.sp )
         AddProduct(addProduct = {
-            vm.add(it)
+            shoppingListViewModel.add(it)
         })
         LazyColumn(
 
         )
         {
-            items(items = vm.list) { product ->
+            items(items = shoppingListUiState.list) { product ->
                 ShoppingListItem(
                     product.name,
                     product.checked,
-                    remove = { vm.remove(product) },
-                    toggleChecked = { vm.toggleChecked(product) },
+                    remove = { shoppingListViewModel.remove(product) },
+                    toggleChecked = { shoppingListViewModel.toggleChecked(product) },
                 )
             }
         }

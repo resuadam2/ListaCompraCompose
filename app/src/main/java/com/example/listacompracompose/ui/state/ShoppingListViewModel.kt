@@ -4,21 +4,34 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.listacompracompose.model.Product
 import com.example.listacompracompose.model.getFakeShoppingProducts
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ShoppingListViewModel : ViewModel() {
-    var list = getFakeShoppingProducts().toMutableStateList()
+
+    private val _uiState = MutableStateFlow(ShoppingListUiState())
+    val uiState: StateFlow<ShoppingListUiState> = _uiState.asStateFlow()
+
+    init {
+        _uiState.value = ShoppingListUiState(getFakeShoppingProducts().toMutableStateList())
+    }
 
     fun toggleChecked(item: Product) {
-        list[list.indexOf(item)] = item.copy(checked = !item.checked)
+        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply {
+            find { it.name == item.name }?.checked = !item.checked
+        })
     }
 
     fun remove(item: Product) {
-        list.remove(item)
+        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply { remove(item) })
     }
 
     // Add a new product to the list if it is not already there
-    fun add(name: String) = if ( list.none { it.name == name } ) {
-        list.add(0, Product(name))
+    fun add(name: String) = if (_uiState.value.list.find { it.name == name } == null) {
+        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply { add(Product(name)) })
         true
-    } else false
+    } else {
+        false
+    }
 }
