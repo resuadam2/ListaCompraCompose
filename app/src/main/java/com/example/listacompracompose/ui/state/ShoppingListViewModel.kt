@@ -1,5 +1,6 @@
 package com.example.listacompracompose.ui.state
 
+import android.content.Context
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.listacompracompose.model.Product
@@ -21,6 +22,7 @@ class ShoppingListViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply {
             find { it.name == item.name }?.checked = !item.checked
         })
+        isSomethingChecked()
     }
 
     fun remove(item: Product) {
@@ -29,9 +31,23 @@ class ShoppingListViewModel : ViewModel() {
 
     // Add a new product to the list if it is not already there
     fun add(name: String) = if (_uiState.value.list.find { it.name == name } == null) {
-        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply { add(Product(name)) })
+        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply { add(0, Product(name)) })
         true
     } else {
         false
+    }
+
+    fun changingNewProduct(newProduct: String) {
+        _uiState.value = _uiState.value.copy(newProduct = newProduct)
+    }
+
+    fun deleteAllChecked() {
+        _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply {
+            removeAll { it.checked }
+        })
+    }
+
+    fun isSomethingChecked() {
+        _uiState.value = _uiState.value.copy(isSomethingChecked = _uiState.value.list.any { it.checked })
     }
 }
