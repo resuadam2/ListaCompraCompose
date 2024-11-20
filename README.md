@@ -21,8 +21,8 @@ En esta misma clase definimos una función para recoger los productos de prueba 
 
 El package `ui` contiene los componibles de la lista de la compra.
 Está dividido en varios paquetes:
-- 'theme': Contiene los colores y dimensiones de la aplicación.
-- 'screen': Contiene los componibles de las pantallas de la aplicación.
-- 'state': Contiene los componibles que manejan el estado de la lista de la compra (en el caso con ViewModel).
+- `theme`: Contiene los colores y dimensiones de la aplicación.
+- `screen`: Contiene los componibles de las pantallas de la aplicación.
+- `state`: Contiene los componibles que manejan el estado de la lista de la compra (en el caso con ViewModel).
 
 En el state del caso con ViewModel se está utilizando MVVM con un ViewModel y un data class para representar el estado de la lista de la compra.
