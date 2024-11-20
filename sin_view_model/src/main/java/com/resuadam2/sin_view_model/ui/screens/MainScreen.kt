@@ -53,7 +53,6 @@ fun MainScreen() {
 fun ScreenContent() {
     var products by remember { mutableStateOf(getFakeShoppingProducts()) }
     var somethingChecked = products.any { it.checked }
-    val context = LocalContext.current
 
     Scaffold (
         topBar = {
