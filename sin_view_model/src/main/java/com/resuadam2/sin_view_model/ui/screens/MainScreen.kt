@@ -1,4 +1,4 @@
-package com.example.listacompracompose.ui.screens
+package com.resuadam2.sin_view_model.ui.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -28,33 +28,47 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.listacompracompose.ui.state.ShoppingListViewModel
+import com.resuadam2.sin_view_model.model.Product
+import com.resuadam2.sin_view_model.model.getFakeShoppingProducts
 
+// private val products = getFakeShoppingProducts()
+
+@Composable
+fun MainScreen() {
+    ScreenContent()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
-    val shoppingListUiState by shoppingListViewModel.uiState.collectAsState()
+fun ScreenContent() {
+    var products by remember { mutableStateOf(getFakeShoppingProducts()) }
+    var somethingChecked = products.any { it.checked }
+    val context = LocalContext.current
+
     Scaffold (
         topBar = {
             TopAppBar(
                 title = {
                     Text( text = "Shopping List", fontSize = 24.sp)
-                     },
+                },
                 actions = {
                     OutlinedIconButton (
-                        onClick = { shoppingListViewModel.deleteAllChecked() },
-                        enabled = shoppingListUiState.isSomethingChecked,
-                        ) {
+                        onClick = {
+                            products = products.filter { !it.checked }.toSet()
+                            somethingChecked = products.any { it.checked }
+                        },
+                        enabled = somethingChecked,
+                    ) {
                         Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete item")
                     }
                 },
@@ -72,25 +86,32 @@ fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
                 .fillMaxSize()
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             AddProductRow(
-                value = shoppingListUiState.newProduct,
-                changingStringValue = {
-                    shoppingListViewModel.changingNewProduct(it)
-                },
-                addProduct = {
-                    shoppingListViewModel.add(it)
-                })
-            LazyColumn(
-
+                products = products,
+                onAdd = { name ->
+                    products = setOf(Product(name, false)) + products
+                }
             )
-            {
-                items(items = shoppingListUiState.list) { product ->
+            LazyColumn {
+                items(products.size) {
+                    val product = products.elementAt(it)
                     ShoppingListItem(
-                        product.name,
-                        product.checked,
-                        remove = { shoppingListViewModel.remove(product) },
-                        toggleChecked = { shoppingListViewModel.toggleChecked(product) },
+                        name = product.name,
+                        checked = product.checked,
+                        onDelete = {
+                            products = products - product
+                        },
+                        toggleChecked = {
+                            products = products.map {
+                                if (it == product) {
+                                    it.copy(checked = !it.checked)
+                                } else {
+                                    it
+                                }
+                            }.toSet()
+                            somethingChecked = products.any { it.checked }
+                        }
                     )
                 }
             }
@@ -100,33 +121,36 @@ fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
 
 @Composable
 fun AddProductRow(
-    value: String,
-    context: Context = LocalContext.current,
-    changingStringValue: (String) -> Unit,
-    addProduct: (String) -> Boolean,
+    products: Set<Product>,
+    onAdd: (String) -> Unit
 ) {
-    Row (
+    val context = LocalContext.current
+    var value by remember { mutableStateOf("") }
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
-    ){
+    ) {
         TextField(
             value = value,
-            onValueChange = { changingStringValue(it) },
+            onValueChange = { value = it },
             singleLine = true,
-            )
+        )
         IconButton(onClick = {
             if (value.isBlank()) {
-                Toast.makeText(context, "Product name cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Product name cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
                 return@IconButton
             }
-            if(!addProduct(value)) {
+            if (products.any { it.name == value }) {
                 Toast.makeText(context, "Product already exists", Toast.LENGTH_SHORT).show()
+            } else {
+                onAdd(value)
             }
-            changingStringValue("")
-        } ) {
+            value = ""
+        }) {
             Icon(imageVector = Icons.Filled.Add, contentDescription = "Add item")
         }
     }
@@ -137,7 +161,7 @@ fun AddProductRow(
 fun ShoppingListItem(
     name: String,
     checked: Boolean,
-    remove: () -> Unit,
+    onDelete: () -> Unit,
     toggleChecked: (Boolean) -> Unit
 ) {
     Row (
@@ -153,7 +177,9 @@ fun ShoppingListItem(
         Spacer(modifier = Modifier.width(30.dp))
         Row {
             Checkbox(checked = checked, onCheckedChange = toggleChecked)
-            IconButton(onClick = remove ) {
+            IconButton(onClick = {
+                onDelete()
+            } ) {
                 Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete item")
             }
         }

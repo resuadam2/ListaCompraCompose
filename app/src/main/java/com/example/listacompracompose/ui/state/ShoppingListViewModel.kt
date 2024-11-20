@@ -22,7 +22,7 @@ class ShoppingListViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply {
             find { it.name == item.name }?.checked = !item.checked
         })
-        isSomethingChecked()
+        isSomethingChecked() // Check if there is something checked
     }
 
     fun remove(item: Product) {
@@ -45,9 +45,10 @@ class ShoppingListViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply {
             removeAll { it.checked }
         })
+        isSomethingChecked() // Check if there is something checked
     }
 
-    fun isSomethingChecked() {
+    private fun isSomethingChecked() {
         _uiState.value = _uiState.value.copy(isSomethingChecked = _uiState.value.list.any { it.checked })
     }
 }

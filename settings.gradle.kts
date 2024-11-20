@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ListaCompraCompose"
 include(":app")
+include(":sin_view_model")
