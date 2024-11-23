@@ -1,4 +1,4 @@
-package com.resuadam2.sin_view_model.ui.screens
+package com.resuadam2.sin_view_model_v2.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,18 +37,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.resuadam2.sin_view_model.model.Product
-import com.resuadam2.sin_view_model.model.getFakeShoppingProducts
+import com.resuadam2.sin_view_model_v2.model.Product
+import com.resuadam2.sin_view_model_v2.model.getFakeShoppingProducts
 
 @Composable
 fun MainScreen() {
-    ScreenContent()
+    val products = remember { mutableStateListOf(*getFakeShoppingProducts().toTypedArray()) }
+
+    ScreenContent(products)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenContent() {
-    var products by remember { mutableStateOf(getFakeShoppingProducts()) }
+fun ScreenContent(
+    products: MutableList<Product>
+) {
 
     Scaffold (
         topBar = {
@@ -58,7 +62,7 @@ fun ScreenContent() {
                 actions = {
                     OutlinedIconButton (
                         onClick = {
-                            products = products.filter { !it.checked }.toSet()
+                            products.removeAll(products.filter { it.checked }.toSet())
                         },
                         enabled = products.any { it.checked },
                     ) {
@@ -81,28 +85,23 @@ fun ScreenContent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AddProductRow(
-                products = products,
+                products = products.toSet(),
                 onAdd = { name ->
-                    products = setOf(Product(name, false)) + products
+                    products.add(0,Product(name = name))
                 }
             )
             LazyColumn {
                 items(products.size) {
                     val product = products.elementAt(it)
+                    val index = products.indexOf(product)
                     ShoppingListItem(
                         name = product.name,
                         checked = product.checked,
                         onDelete = {
-                            products = products - product
+                            products.remove(product)
                         },
                         toggleChecked = {
-                            products = products.map {
-                                if (it == product) {
-                                    it.copy(checked = !it.checked)
-                                } else {
-                                    it
-                                }
-                            }.toSet()
+                            products[index] = product.copy(checked = it)
                         }
                     )
                 }
