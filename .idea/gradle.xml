@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/sin_view_model" />
             <option value="$PROJECT_DIR$/sin_view_model_v2" />
+            <option value="$PROJECT_DIR$/view_model_hibrido" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

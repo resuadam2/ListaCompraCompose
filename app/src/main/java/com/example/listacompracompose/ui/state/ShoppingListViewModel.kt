@@ -1,6 +1,5 @@
 package com.example.listacompracompose.ui.state
 
-import android.content.Context
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.listacompracompose.model.Product

@@ -17,3 +17,4 @@ rootProject.name = "ListaCompraCompose"
 include(":app")
 include(":sin_view_model")
 include(":sin_view_model_v2")
+include(":view_model_hibrido")

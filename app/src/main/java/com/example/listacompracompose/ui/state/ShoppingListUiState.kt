@@ -1,6 +1,5 @@
 package com.example.listacompracompose.ui.state
 
-import android.content.Context
 import com.example.listacompracompose.model.Product
 
 data class ShoppingListUiState (
@@ -8,3 +7,4 @@ data class ShoppingListUiState (
     val newProduct: String = "",
     val isSomethingChecked: Boolean = false
 )
+
