@@ -20,7 +20,8 @@ class ShoppingListViewModel : ViewModel() {
     }
 
     fun toggleChecked(item: Product) {
-        _shoppingList.find { it.name == item.name }?.checked = !item.checked
+        // _shoppingList.find { it.name == item.name }?.checked = !item.checked
+        _shoppingList.set(_shoppingList.indexOf(item), item.copy(checked = !item.checked))
         isSomethingChecked() // Check if there is something checked
     }
 
@@ -42,5 +43,10 @@ class ShoppingListViewModel : ViewModel() {
 
     fun changingNewProduct(newProduct: String) {
         state = state.copy(newProduct = newProduct)
+    }
+
+    fun deleteAllChecked() {
+        _shoppingList.removeAll { it.checked }
+        isSomethingChecked() // Check if there is something checked
     }
 }

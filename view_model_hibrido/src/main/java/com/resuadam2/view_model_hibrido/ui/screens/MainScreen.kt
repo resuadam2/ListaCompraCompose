@@ -35,12 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
     val shoppingListUiState = shoppingListViewModel.state
-    val products = shoppingListViewModel.shoppingList.toList()
+    val products = shoppingListViewModel.shoppingList
 
     Scaffold (
         topBar = {
@@ -83,13 +84,13 @@ fun MainScreen(shoppingListViewModel: ShoppingListViewModel = viewModel()) {
 
             )
             {
-                items(items = products.size) {
-                    val product = products.elementAt(it)
+                items(products.size) { index ->
+                    val product = products.elementAt(index)
                     ShoppingListItem(
-                        product.name,
-                        product.checked,
+                        name = product.name,
+                        checked = product.checked,
                         remove = { shoppingListViewModel.remove(product) },
-                        toggleChecked = { shoppingListViewModel.toggleChecked(product) },
+                        toggleChecked = { shoppingListViewModel.toggleChecked(product) }
                     )
                 }
             }
