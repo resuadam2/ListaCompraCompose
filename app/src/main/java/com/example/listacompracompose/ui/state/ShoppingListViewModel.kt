@@ -26,6 +26,7 @@ class ShoppingListViewModel : ViewModel() {
 
     fun remove(item: Product) {
         _uiState.value = _uiState.value.copy(list = _uiState.value.list.toMutableStateList().apply { remove(item) })
+        isSomethingChecked() // Check if there is something checked
     }
 
     // Add a new product to the list if it is not already there
